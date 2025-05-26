@@ -11,7 +11,7 @@ find_package(raylib)
 set(TREE_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/tree.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/tree.h
-  )
+)
 
 add_library(tree)
 target_sources(tree
@@ -20,6 +20,22 @@ target_sources(tree
   )
 
 target_include_directories(tree
+ PRIVATE
+ ${INCLUDE}
+)
+
+set(STACK_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/stack.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/stack.h
+)
+
+add_library(stack)
+target_sources(stack
+ PRIVATE
+  ${STACK_SOURCES}
+  )
+
+target_include_directories(stack
  PRIVATE
  ${INCLUDE}
  )
@@ -37,5 +53,6 @@ target_sources(main
 target_link_libraries(main
   ${raylib_LIBRARIES}
   tree
+  stack
 )
 
