@@ -1,31 +1,53 @@
 #include <stdio.h>
 #include "raylib.h"
 #include "tree.h"
+#include "stack.h"
 
-float dist_xl(Node* tree);
 
-float dist_xr(Node* tree){
+float dist_xl(Node* tree, Stack* stack, float layer, float x_offset);
+
+float dist_xr(Node* tree, Stack* stack, float layer, float x_offset){
     //basisfall
     if(tree->right == NULL) {
         return 0.0f;
     }
     //rekursionsschritt
-    return dist_xl(tree->right) + dist_xr(tree->right) + 2.0f;
+    float dist_xl_calc = dist_xl(tree->right, stack, layer+1.0f, x_offset);
+    float dist_xr_calc = dist_xr(tree->right, stack, layer+1.0f, x_offset + dist_xl_calc);
+    float dist = dist_xl_calc + dist_xr_calc + 1.0f;
+    stack_push(stack, CLITERAL(Vector3) {
+        .x = dist + x_offset,
+        .y = layer,
+        .z = (float)tree->data,
+    });
+    return dist;
 }
 
-float dist_xl(Node* tree){
+float dist_xl(Node* tree, Stack* stack, float layer, float x_offset){
     //basisfall
     if(tree->left == NULL) {
         return 0.0f;
     }
     //rekursionsschritt
-    return dist_xl(tree->left) + dist_xr(tree->left) + 2.0f;
+    float dist_xl_calc = dist_xl(tree->left, stack, layer+1.0f, x_offset);
+    float dist_xr_calc = dist_xr(tree->left, stack, layer+1.0f, x_offset + dist_xl_calc + 1.0f);
+    float dist = dist_xl_calc + dist_xr_calc + 1.0f;
+    stack_push(stack, CLITERAL(Vector3) {
+        .x = dist + x_offset,
+        .y = layer,
+        .z = (float)tree->data,
+    });
+    return dist;
 }
 
 void visualize_tree(Node* tree, float layer) {
-    float tree_x = dist_xl(tree);
+    Stack* stack = create_stack();
+    float tree_x = dist_xl(tree, stack, layer, 0);
     float tree_y = layer;
-    // ...
+    float egal = dist_xr(tree, stack, layer, tree_x);
+    // stack is ready with all points
+    // lets print it!
+    stack_print(stack);
 }
 
 int main(void)
@@ -41,13 +63,8 @@ int main(void)
 
     // 10, 2, 1, 5, 17
     tree_print_preorder(tree);
-    printf("---------");
-    float left10 = dist_xl(tree);
-    float left2 = dist_xl(tree->left);
-    float left1 = dist_xl(tree->left->left);
-    float left5 = left2 + 1 + dist_xl(tree->left->right);
-
-    printf("left10: %f,left2: %f, left1: %f, left5: %f \n", left10, left2, left1, left5);
+    printf("---------------------\n");
+    visualize_tree(tree, 0);
 
     /*
     size_t screen_width = 800;
