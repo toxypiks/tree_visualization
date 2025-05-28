@@ -3,48 +3,65 @@
 #include "tree.h"
 #include "stack.h"
 
+/*
+function ->
+                     root
+<-----distl---->(pos_x, pos_y)<---distr---->
+                  /      \
+                links   right
+                          /  \
+                         rr   rl
+*/
 
-float dist_xl(Node* tree, Stack* stack, float layer, float x_offset);
+typedef struct NodePos {
+    float x;
+    float y;
+    float distl;
+    float distr;
+} NodePos;
 
-float dist_xr(Node* tree, Stack* stack, float layer, float x_offset){
-    //basisfall
-    if(tree->right == NULL) {
-        return 0.0f;
-    }
-    //rekursionsschritt
-    float dist_xl_calc = dist_xl(tree->right, stack, layer+1.0f, x_offset);
-    float dist_xr_calc = dist_xr(tree->right, stack, layer+1.0f, x_offset + dist_xl_calc);
-    float dist = dist_xl_calc + dist_xr_calc + 1.0f;
-    stack_push(stack, CLITERAL(Vector3) {
-        .x = dist + x_offset,
+NodePos get_node_pos(Node* tree, Stack* stack,float layer, float x_offset)
+{
+    NodePos node_pos = {
+        .x = 0.0 + x_offset,
         .y = layer,
+        .distl = 0.0f,
+        .distr = 0.0f,
+    };
+    if (!tree) {
+        return node_pos;
+    }
+
+    NodePos node_pos_left = {0};
+    float dist_left = 0.0f;
+    if (tree->left) {
+        node_pos_left = get_node_pos(tree->left, stack, layer + 1.0f, x_offset);
+        dist_left = node_pos_left.distl + 1.0f + node_pos_left.distr;
+    }
+
+    NodePos node_pos_right = {0};
+    float dist_right = 0.0f;
+    if (tree->right) {
+        node_pos_right = get_node_pos(tree->right, stack, layer + 1.0f, x_offset + 1.0f + dist_left);
+        dist_right = node_pos_right.distl + 1.0f + node_pos_right.distr;
+    }
+    node_pos.x = x_offset + dist_left;
+    node_pos.distl = dist_left;
+    node_pos.distr = dist_right;
+
+    stack_push(stack, CLITERAL(Vector3) {
+        .x = node_pos.x,
+        .y = node_pos.y,
         .z = (float)tree->data,
     });
-    return dist;
+
+    return node_pos;
 }
 
-float dist_xl(Node* tree, Stack* stack, float layer, float x_offset){
-    //basisfall
-    if(tree->left == NULL) {
-        return 0.0f;
-    }
-    //rekursionsschritt
-    float dist_xl_calc = dist_xl(tree->left, stack, layer+1.0f, x_offset);
-    float dist_xr_calc = dist_xr(tree->left, stack, layer+1.0f, x_offset + dist_xl_calc + 1.0f);
-    float dist = dist_xl_calc + dist_xr_calc + 1.0f;
-    stack_push(stack, CLITERAL(Vector3) {
-        .x = dist + x_offset,
-        .y = layer,
-        .z = (float)tree->data,
-    });
-    return dist;
-}
 
 void visualize_tree(Node* tree, float layer) {
     Stack* stack = create_stack();
-    float tree_x = dist_xl(tree, stack, layer, 0);
-    float tree_y = layer;
-    float egal = dist_xr(tree, stack, layer, tree_x);
+    NodePos tree_pos = get_node_pos(tree, stack, layer, 0);
     // stack is ready with all points
     // lets print it!
     stack_print(stack);
