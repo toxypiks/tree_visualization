@@ -98,35 +98,41 @@ void normalize_values(TreeMap *tree_map, float max_x, float max_y)
     }
 }
 
-void visualize_tree(Node* tree, float layer) {
+TreeMap* calc_tree_poses(Node* tree, float layer, float* max_radius) {
     TreeMap *tree_map = NULL;
     NodePos tree_pos = get_node_pos(tree, &tree_map, layer, 0);
     float max_x = tree_pos.distl + 1.0f + tree_pos.distr;
     float max_y = max_layer(tree_map);
     normalize_values(tree_map, max_x, max_y);
-
-    // hash_map is ready with all points
-    // lets print it!
-    print_hash_map(tree_map);
+    *max_radius = 1.0/max_x;
+    return tree_map;
 }
 
 int main(void)
 {
+    Color background = GetColor(0x181818FF);
     int root_data = 10;
     Node *tree = create_node(root_data);
+    TreeMap *tree_map = NULL;
 
     tree_insert(&tree, 2);
     tree_insert(&tree, 5);
     tree_insert(&tree, 17);
     tree_insert(&tree, 1);
     tree_insert(&tree, 4);
+    tree_insert(&tree, 21);
+    tree_insert(&tree, 12);
+    tree_insert(&tree, 14);
+    tree_insert(&tree, 3);
+
 
     // 10, 2, 1, 5, 17
     tree_print_preorder(tree);
     printf("---------------------\n");
-    visualize_tree(tree, 0);
 
-    /*
+    float max_radius = 0.0f;
+    tree_map = calc_tree_poses(tree, 0, &max_radius);
+
     size_t screen_width = 800;
     size_t screen_height = 600;
 
@@ -139,10 +145,22 @@ int main(void)
 
     while (!WindowShouldClose()) {
         BeginDrawing();
-        ClearBackground(GetColor(0x181818AA));
+        for (size_t i = 0; i < hmlen(tree_map); ++i) {
+            int circle_x = (int)(tree_map[i].value.x * w);
+            int circle_y = (int)(tree_map[i].value.y * h);
+            float radius = 0.4f*max_radius*w*0.5f;
+            DrawCircle(circle_x, circle_y, radius, GREEN);
+            DrawCircle(circle_x, circle_y, 0.9f*radius, background);
+
+            char text[8];
+            sprintf(text, "%d",tree_map[i].key->data);
+            int len_pos = strlen(text)*0.2 + 0.3f;
+            float font_size = 0.8f * radius;
+            DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);
+        }
+        ClearBackground(background);
         EndDrawing();
     }
     CloseWindow();
-    */
     return 0;
 }
