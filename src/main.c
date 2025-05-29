@@ -77,9 +77,34 @@ void print_hash_map(TreeMap *tree_map)
     }
 }
 
+float max_layer(TreeMap *tree_map)
+{
+    float max = 0.0f;
+    for (size_t i = 0; i < hmlen(tree_map); ++i) {
+        max = tree_map[i].value.y > max ? tree_map[i].value.y : max;
+    }
+    return max + 1.0f;
+}
+void normalize_values(TreeMap *tree_map, float max_x, float max_y)
+{
+    if(!tree_map){
+        return;
+    }
+    for (size_t i = 0; i < hmlen(tree_map); ++i) {
+        tree_map[i].value.x += 1.0f;
+        tree_map[i].value.x /= (max_x + 1.0f);
+        tree_map[i].value.y += 1.0f;
+        tree_map[i].value.y /= (max_y + 1.0f);
+    }
+}
+
 void visualize_tree(Node* tree, float layer) {
     TreeMap *tree_map = NULL;
     NodePos tree_pos = get_node_pos(tree, &tree_map, layer, 0);
+    float max_x = tree_pos.distl + 1.0f + tree_pos.distr;
+    float max_y = max_layer(tree_map);
+    normalize_values(tree_map, max_x, max_y);
+
     // hash_map is ready with all points
     // lets print it!
     print_hash_map(tree_map);
