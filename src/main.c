@@ -3,6 +3,9 @@
 #include "tree.h"
 #include "stack.h"
 
+#define STB_DS_IMPLEMENTATION
+#include "stb_ds.h"
+
 /*
 function ->
                      root
@@ -20,7 +23,20 @@ typedef struct NodePos {
     float distr;
 } NodePos;
 
-NodePos get_node_pos(Node* tree, Stack* stack,float layer, float x_offset)
+// Hashmap stuff:
+// key Node*
+// value Pos
+// hmput(my_hmap, key, NodePos)
+//                 |         |
+//                 v         v
+//                 data      (x,y,...
+
+typedef struct TreeMap {
+    Node *key;
+    NodePos value;
+} TreeMap;
+
+NodePos get_node_pos(Node* tree, TreeMap **tree_map,float layer, float x_offset)
 {
     NodePos node_pos = {
         .x = 0.0 + x_offset,
@@ -35,36 +51,38 @@ NodePos get_node_pos(Node* tree, Stack* stack,float layer, float x_offset)
     NodePos node_pos_left = {0};
     float dist_left = 0.0f;
     if (tree->left) {
-        node_pos_left = get_node_pos(tree->left, stack, layer + 1.0f, x_offset);
+        node_pos_left = get_node_pos(tree->left, tree_map, layer + 1.0f, x_offset);
         dist_left = node_pos_left.distl + 1.0f + node_pos_left.distr;
     }
 
     NodePos node_pos_right = {0};
     float dist_right = 0.0f;
     if (tree->right) {
-        node_pos_right = get_node_pos(tree->right, stack, layer + 1.0f, x_offset + 1.0f + dist_left);
+        node_pos_right = get_node_pos(tree->right, tree_map, layer + 1.0f, x_offset + 1.0f + dist_left);
         dist_right = node_pos_right.distl + 1.0f + node_pos_right.distr;
     }
     node_pos.x = x_offset + dist_left;
     node_pos.distl = dist_left;
     node_pos.distr = dist_right;
 
-    stack_push(stack, CLITERAL(Vector3) {
-        .x = node_pos.x,
-        .y = node_pos.y,
-        .z = (float)tree->data,
-    });
+    hmput(*tree_map, tree, node_pos);
 
     return node_pos;
 }
 
+void print_hash_map(TreeMap *tree_map)
+{
+    for (size_t i = 0; i < hmlen(tree_map); ++i) {
+        printf("key: %d, NodePos.x: %f, NodePos.y: %f\n", tree_map[i].key->data, tree_map[i].value.x, tree_map[i].value.y);
+    }
+}
 
 void visualize_tree(Node* tree, float layer) {
-    Stack* stack = create_stack();
-    NodePos tree_pos = get_node_pos(tree, stack, layer, 0);
-    // stack is ready with all points
+    TreeMap *tree_map = NULL;
+    NodePos tree_pos = get_node_pos(tree, &tree_map, layer, 0);
+    // hash_map is ready with all points
     // lets print it!
-    stack_print(stack);
+    print_hash_map(tree_map);
 }
 
 int main(void)
