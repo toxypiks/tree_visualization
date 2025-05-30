@@ -6,37 +6,7 @@
 #define STB_DS_IMPLEMENTATION
 #include "stb_ds.h"
 
-/*
-function ->
-                     root
-<-----distl---->(pos_x, pos_y)<---distr---->
-                  /      \
-                links   right
-                          /  \
-                         rr   rl
-*/
-
-typedef struct NodePos {
-    float x;
-    float y;
-    float distl;
-    float distr;
-} NodePos;
-
-// Hashmap stuff:
-// key Node*
-// value Pos
-// hmput(my_hmap, key, NodePos)
-//                 |         |
-//                 v         v
-//                 data      (x,y,...
-
-typedef struct TreeMap {
-    Node *key;
-    NodePos value;
-} TreeMap;
-
-NodePos get_node_pos(Node* tree, TreeMap **tree_map,float layer, float x_offset)
+NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset)
 {
     NodePos node_pos = {
         .x = 0.0 + x_offset,
@@ -108,6 +78,44 @@ TreeMap* calc_tree_poses(Node* tree, float layer, float* max_radius) {
     return tree_map;
 }
 
+void get_edges(Node* tree, Edge** edges)
+{
+    if(tree == NULL) {
+        return;
+    }
+    if(tree->left != NULL) {
+        arrput(*edges, ((Edge){
+            .start=tree,
+            .end=tree->left}
+            ));
+        get_edges(tree->left, edges);
+    }
+    if(tree->right != NULL) {
+        arrput(*edges, ((Edge){
+            .start=tree,
+            .end=tree->right}
+            ));
+        get_edges(tree->right, edges);
+    }
+}
+
+EdgeCoordinates* translate_edges_to_coordinates(Edge* edges, TreeMap* tree_map)
+{
+    EdgeCoordinates* edge_coords = NULL;
+    for (size_t i = 0; i < arrlen(edges); ++i) {
+        NodePos start_pos = hmget(tree_map, edges[i].start);
+        NodePos end_pos = hmget(tree_map,edges[i].end);
+        arrput(edge_coords, ((EdgeCoordinates){
+            .start_x = start_pos.x,
+            .start_y = start_pos.y,
+            .end_x = end_pos.x,
+            .end_y = end_pos.y
+        }));
+    }
+    return edge_coords;
+}
+
+
 int main(void)
 {
     Color background = GetColor(0x181818FF);
@@ -133,6 +141,11 @@ int main(void)
     float max_radius = 0.0f;
     tree_map = calc_tree_poses(tree, 0, &max_radius);
 
+    Edge *edges = NULL;
+    get_edges(tree, &edges);
+
+    EdgeCoordinates *edge_coords = translate_edges_to_coordinates(edges, tree_map);
+
     size_t screen_width = 800;
     size_t screen_height = 600;
 
@@ -145,9 +158,12 @@ int main(void)
 
     while (!WindowShouldClose()) {
         BeginDrawing();
+        for (size_t i = 0; i < arrlen(edge_coords); ++i) {
+            DrawLine((int)(edge_coords[i].start_x*w), (int)(edge_coords[i].start_y*h), (int)(edge_coords[i].end_x*w), (int)(edge_coords[i].end_y*h), PINK);
+        }
         for (size_t i = 0; i < hmlen(tree_map); ++i) {
-            int circle_x = (int)(tree_map[i].value.x * w);
-            int circle_y = (int)(tree_map[i].value.y * h);
+            int circle_x = (int)(tree_map[i].value.x*w);
+            int circle_y = (int)(tree_map[i].value.y*h);
             float radius = 0.4f*max_radius*w*0.5f;
             DrawCircle(circle_x, circle_y, radius, GREEN);
             DrawCircle(circle_x, circle_y, 0.9f*radius, background);
@@ -158,6 +174,7 @@ int main(void)
             float font_size = 0.8f * radius;
             DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);
         }
+
         ClearBackground(background);
         EndDrawing();
     }
