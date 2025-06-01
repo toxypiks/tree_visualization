@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "tree.h"
 #include "stack.h"
+#include "doubly_linked_list.h"
 
 #define STB_DS_IMPLEMENTATION
 #include "stb_ds.h"
@@ -116,6 +117,34 @@ EdgeCoordinates* translate_edges_to_coordinates(Edge* edges, TreeMap* tree_map)
 }
 
 
+void tree_algo_step(Node **tree)
+{
+    int rand_num = rand() % 30;
+    tree_insert(tree, rand_num);
+}
+
+void calc_tree_state(TreeState* tree_state)
+{
+    tree_state->tree_map = calc_tree_poses(tree_state->tree, 0, &(tree_state->max_radius));
+
+    get_edges(tree_state->tree, &(tree_state->edges));
+
+    tree_state->edge_coords = translate_edges_to_coordinates(tree_state->edges, tree_state->tree_map);
+}
+
+Node* tree_copy(Node *tree)
+{
+    Node *new_tree = create_node(tree->data);
+
+    if (tree->left) {
+        new_tree->left = tree_copy(tree->left);
+    }
+    if (tree->right) {
+        new_tree->right = tree_copy(tree->right);
+    }
+    return new_tree;
+}
+
 int main(void)
 {
     Color background = GetColor(0x181818FF);
@@ -146,6 +175,18 @@ int main(void)
 
     EdgeCoordinates *edge_coords = translate_edges_to_coordinates(edges, tree_map);
 
+    TreeList *tree_list = create_list();
+
+    // create first element:
+    TreeState tree_state = {
+        .tree = tree,
+        .tree_map = tree_map,
+        .edges = edges,
+        .edge_coords = edge_coords,
+        .max_radius = max_radius
+    };
+    list_push_first(tree_list, tree_state);
+
     size_t screen_width = 800;
     size_t screen_height = 600;
 
@@ -157,19 +198,34 @@ int main(void)
     float h = GetRenderHeight();
 
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        for (size_t i = 0; i < arrlen(edge_coords); ++i) {
-            DrawLine((int)(edge_coords[i].start_x*w), (int)(edge_coords[i].start_y*h), (int)(edge_coords[i].end_x*w), (int)(edge_coords[i].end_y*h), PINK);
+        if(IsKeyPressed(KEY_N)) { // TODO later Emacs keybindings
+            // TODO push new TreeLE to list
+
+            TreeState new_tree_state;
+            new_tree_state.tree = tree_copy(tree_list->first->tree_state.tree);
+            // copy old tree in new state
+            tree_algo_step(&(new_tree_state.tree));
+            calc_tree_state(&new_tree_state);
+
+            list_push_first(tree_list, new_tree_state);
         }
-        for (size_t i = 0; i < hmlen(tree_map); ++i) {
-            int circle_x = (int)(tree_map[i].value.x*w);
-            int circle_y = (int)(tree_map[i].value.y*h);
-            float radius = 0.4f*max_radius*w*0.5f;
+        TreeState tree_state_print = tree_list->first->tree_state;
+        BeginDrawing();
+        for (size_t i = 0; i < arrlen(tree_state_print.edge_coords); ++i) {
+            DrawLine((int)(tree_state_print.edge_coords[i].start_x*w),
+                     (int)(tree_state_print.edge_coords[i].start_y*h),
+                     (int)(tree_state_print.edge_coords[i].end_x*w),
+                     (int)(tree_state_print.edge_coords[i].end_y*h), PINK);
+        }
+        for (size_t i = 0; i < hmlen(tree_state_print.tree_map); ++i) {
+            int circle_x = (int)(tree_state_print.tree_map[i].value.x*w);
+            int circle_y = (int)(tree_state_print.tree_map[i].value.y*h);
+            float radius = 0.4f*tree_state_print.max_radius*w*0.5f;
             DrawCircle(circle_x, circle_y, radius, GREEN);
             DrawCircle(circle_x, circle_y, 0.9f*radius, background);
 
             char text[8];
-            sprintf(text, "%d",tree_map[i].key->data);
+            sprintf(text, "%d", tree_state_print.tree_map[i].key->data);
             int len_pos = strlen(text)*0.2 + 0.3f;
             float font_size = 0.8f * radius;
             DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);

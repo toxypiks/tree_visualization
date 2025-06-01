@@ -24,6 +24,21 @@ target_include_directories(tree
  ${INCLUDE}
 )
 
+set(DOUBLY_LINKED_LIST_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/doubly_linked_list.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/doubly_linked_list.h
+)
+
+add_library(doubly_linked_list)
+target_sources(doubly_linked_list
+ PRIVATE
+  ${DOUBLY_LINKED_LIST_SOURCES}
+  )
+target_include_directories(doubly_linked_list
+ PRIVATE
+ ${INCLUDE}
+)
+
 set(STACK_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/stack.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/stack.h
@@ -53,6 +68,7 @@ target_sources(main
 target_link_libraries(main
   ${raylib_LIBRARIES}
   tree
+  doubly_linked_list
   stack
 )
 

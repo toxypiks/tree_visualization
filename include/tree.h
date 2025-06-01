@@ -31,6 +31,14 @@ typedef struct EdgeCoordinates {
     float end_y;
 } EdgeCoordinates;
 
+typedef struct TreeState {
+    Node *tree;
+    TreeMap *tree_map;
+    Edge *edges;
+    EdgeCoordinates *edge_coords;
+    float max_radius;
+} TreeState;
+
 Node* create_node (int data);
 void tree_insert(Node **tree, int data);
 void tree_print_preorder(Node* tree);
