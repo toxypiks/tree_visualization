@@ -19,6 +19,7 @@ TreeList* create_list()
     TreeList *new_list = malloc(sizeof(TreeList));
     new_list->first = NULL;
     new_list->last = NULL;
+    new_list->current = NULL;
     new_list->length = 0;
     return new_list;
 }
@@ -43,6 +44,7 @@ void list_push_first(TreeList *list, TreeState tree_state)
 
     if (first_node == NULL) {
         list->last = new_node;
+        list->current = new_node;
     } else {
         first_node->prev = new_node;
     }
@@ -111,9 +113,14 @@ void list_delete_first(TreeList *list)
         free(list->last);
         list->last = NULL;
         list->first = NULL;
+        list->current = NULL;
         list->length--;
         return;
     }
+    if (list->first == list->current) {
+        list->current = list->first->next;
+    }
+
     TreeLE *second = list->first->next;
     list->first = second;
     list->first->prev = NULL;
@@ -132,9 +139,14 @@ void list_delete_last(TreeList *list)
         free(list->last);
         list->last = NULL;
         list->first = NULL;
+        list->current = NULL;
         list->length--;
         return;
     }
+    if (list->last == list->current) {
+        list->current = list->last->prev;
+    }
+
     TreeLE *penultimate = last->prev;
     penultimate->next = NULL;
     free(last);
@@ -144,9 +156,9 @@ void list_delete_last(TreeList *list)
 
 void list_delete_at_position(TreeList *list, int position)
 {
-    TreeLE *current = list->first;
+    TreeLE *tmp = list->first;
 
-    if (current == NULL) {
+    if (tmp == NULL) {
         printf("ERROR: List already empty\n");
         return;
     }
@@ -164,23 +176,26 @@ void list_delete_at_position(TreeList *list, int position)
     }
     else {
         for (int i = 0; i < position - 2; ++i) {
-            current = current->next;
+            tmp = tmp->next;
         }
     }
 
-    TreeLE *current_next_next = current->next->next;
-    free(current->next);
-    current->next = current_next_next;
-    current_next_next->prev = current;
+    if (tmp == list->current) {
+        list->current = tmp->next;
+    }
+    TreeLE *tmp_next_next = tmp->next->next;
+    free(tmp->next);
+    tmp->next = tmp_next_next;
+    tmp_next_next->prev = tmp;
     list->length--;
 }
 
 void print_list(TreeList *list)
 {
-    TreeLE *current = list->first;
-    while (current != NULL) {
-        printf("%d,", current->tree_state);
-        current = current->next;
+    TreeLE *tmp = list->first;
+    while (tmp != NULL) {
+        printf("%d,", tmp->tree_state);
+        tmp = tmp->next;
     }
     printf("\n");
 }

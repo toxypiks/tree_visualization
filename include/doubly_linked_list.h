@@ -12,6 +12,7 @@ typedef struct TreeLE {
 typedef struct TreeList {
     TreeLE *first;
     TreeLE *last;
+    TreeLE *current;
     size_t length;
 } TreeList;
 

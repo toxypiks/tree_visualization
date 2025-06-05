@@ -69,6 +69,7 @@ void normalize_values(TreeMap *tree_map, float max_x, float max_y)
     }
 }
 
+// position not pose
 TreeMap* calc_tree_poses(Node* tree, float layer, float* max_radius) {
     TreeMap *tree_map = NULL;
     NodePos tree_pos = get_node_pos(tree, &tree_map, layer, 0);
