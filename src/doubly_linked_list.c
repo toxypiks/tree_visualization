@@ -37,6 +37,21 @@ int list_len(TreeList *list)
     return list->length;
 }
 
+TreeLE* get_current(TreeList *list)
+{
+    return list->current;
+}
+
+void increment_current(TreeList *list)
+{
+    list->current = list->current->next ? list->current->next : list->current;
+}
+
+void decrement_current(TreeList *list)
+{
+    list->current = list->current->prev ? list->current->prev : list->current;
+}
+
 void list_push_first(TreeList *list, TreeState tree_state)
 {
     TreeLE *new_node = _create_node(tree_state);

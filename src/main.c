@@ -199,18 +199,25 @@ int main(void)
     float h = GetRenderHeight();
 
     while (!WindowShouldClose()) {
+        if(IsKeyPressed(KEY_RIGHT)) {
+            increment_current(tree_list);
+        }
+        if(IsKeyPressed(KEY_LEFT)) {
+            decrement_current(tree_list);
+        }
         if(IsKeyPressed(KEY_N)) { // TODO later Emacs keybindings
             // TODO push new TreeLE to list
 
-            TreeState new_tree_state;
-            new_tree_state.tree = tree_copy(tree_list->first->tree_state.tree);
+            TreeState new_tree_state = {0};
+            new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
             // copy old tree in new state
             tree_algo_step(&(new_tree_state.tree));
             calc_tree_state(&new_tree_state);
 
-            list_push_first(tree_list, new_tree_state);
+            list_push_last(tree_list, new_tree_state);
         }
-        TreeState tree_state_print = tree_list->first->tree_state;
+        TreeLE *current = get_current(tree_list);
+        TreeState tree_state_print = current->tree_state;
         BeginDrawing();
         for (size_t i = 0; i < arrlen(tree_state_print.edge_coords); ++i) {
             DrawLine((int)(tree_state_print.edge_coords[i].start_x*w),

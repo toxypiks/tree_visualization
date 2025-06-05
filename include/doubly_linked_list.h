@@ -19,6 +19,9 @@ typedef struct TreeList {
 TreeList* create_list();
 bool list_is_empty(TreeList *list);
 int list_len(TreeList *list);
+TreeLE* get_current(TreeList *list);
+void increment_current(TreeList *list);
+void decrement_current(TreeList *list);
 void list_push_first(TreeList *list, TreeState tree_state);
 void list_push_last(TreeList *list, TreeState tree_state);
 void list_push_to_position(TreeList *list, TreeState tree_state, int position);
