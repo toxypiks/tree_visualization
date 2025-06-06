@@ -182,11 +182,20 @@ void tree_list_widget(UiRect r, TreeList *tree_list, Color background)
     layout_stack_push(&ls, LO_HORZ, ui_rect(x, y, w, h), 4, 0);
 
     for (size_t i = 0; i < 4 ;++i) {
+        UiRect ui_rect = layout_stack_slot(&ls);
         if(tree_state_print[i]) {
-            tree_widget(layout_stack_slot(&ls), tree_state_print[i], background);
-        } else {
-            widget(layout_stack_slot(&ls), background);
+            tree_widget(ui_rect, tree_state_print[i], background);
+        } else { // no tree
+            widget(ui_rect, background);
         }
+        Rectangle rect = {.x = ui_rect.x, .y = ui_rect.y, .width = ui_rect.w, .height = ui_rect.h };
+        Color color = WHITE;
+        float thickness = 1.0f;
+        if (i == 2) {
+            color = GREEN;
+            thickness = 4.0f;
+        }
+        DrawRectangleLinesEx(rect, thickness, color);
     }
 }
 
