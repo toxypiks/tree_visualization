@@ -71,5 +71,5 @@ UiRect layout_slot_loc(Layout *l, const char *file_path, int line);
 void layout_stack_push(LayoutStack *ls, LayoutOrient orient, UiRect rect, size_t count, float gap);
 void layout_stack_delete(LayoutStack *ls);
 void widget(UiRect r, Color c);
-void current_tree_widget(UiRect r, TreeList *tree_list, Color background);
+void current_tree_widget(UiRect r, TreeState *tree_state_print, Color background);
 #endif // UI_STUFF_H

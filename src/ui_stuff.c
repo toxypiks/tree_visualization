@@ -130,31 +130,28 @@ static Color colors[] = {
 
 void widget(UiRect r, Color c) { DrawRectangle(r.x, r.y, r.w, r.h, c); }
 
-void current_tree_widget(UiRect r, TreeList *tree_list, Color background)
+void current_tree_widget(UiRect r, TreeState *tree_state_print, Color background)
 {
     float x = r.x;
     float y = r.y;
     float w = r.w;
     float h = r.h;
 
-    TreeLE *current = get_current(tree_list);
-    TreeState tree_state_print = current->tree_state;
-
-    for (size_t i = 0; i < arrlen(tree_state_print.edge_coords); ++i) {
-        DrawLine((int)(tree_state_print.edge_coords[i].start_x*w + x),
-                 (int)(tree_state_print.edge_coords[i].start_y*h + y),
-                 (int)(tree_state_print.edge_coords[i].end_x*w + x),
-                 (int)(tree_state_print.edge_coords[i].end_y*h + y), PINK);
+    for (size_t i = 0; i < arrlen(tree_state_print->edge_coords); ++i) {
+        DrawLine((int)(tree_state_print->edge_coords[i].start_x*w + x),
+                 (int)(tree_state_print->edge_coords[i].start_y*h + y),
+                 (int)(tree_state_print->edge_coords[i].end_x*w + x),
+                 (int)(tree_state_print->edge_coords[i].end_y*h + y), PINK);
     }
-    for (size_t i = 0; i < hmlen(tree_state_print.tree_map); ++i) {
-        int circle_x = (int)(tree_state_print.tree_map[i].value.x*w + x);
-        int circle_y = (int)(tree_state_print.tree_map[i].value.y*h +  y);
-        float radius = 0.4f*tree_state_print.max_radius*w*0.5f;
+    for (size_t i = 0; i < hmlen(tree_state_print->tree_map); ++i) {
+        int circle_x = (int)(tree_state_print->tree_map[i].value.x*w + x);
+        int circle_y = (int)(tree_state_print->tree_map[i].value.y*h +  y);
+        float radius = 0.4f*tree_state_print->max_radius*w*0.5f;
         DrawCircle(circle_x, circle_y, radius, GREEN);
         DrawCircle(circle_x, circle_y, 0.9f*radius, background);
 
         char text[8];
-        sprintf(text, "%d", tree_state_print.tree_map[i].key->data);
+        sprintf(text, "%d", tree_state_print->tree_map[i].key->data);
         int len_pos = strlen(text)*0.2 + 0.3f;
         float font_size = 0.8f * radius;
         DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);

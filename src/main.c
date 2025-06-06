@@ -228,7 +228,7 @@ int main(void)
         UiRect rect0 = layout_stack_slot(&ls);
         UiRect rect1 = layout_stack_slot(&ls);
         UiRect rect_total = rect_combine(rect0, rect1, LO_VERT);
-        current_tree_widget(rect_total, tree_list, background);
+        current_tree_widget(rect_total, &tree_state_print, background);
         widget(layout_stack_slot(&ls), PINK);
         ClearBackground(background);
         EndDrawing();
