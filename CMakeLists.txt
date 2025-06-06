@@ -70,5 +70,21 @@ target_link_libraries(main
   tree
   doubly_linked_list
   stack
+  ui_stuff
 )
 
+set(UI_STUFF_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_stuff.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/ui_stuff.h
+  )
+
+add_library(ui_stuff)
+target_sources(ui_stuff
+ PRIVATE
+  ${UI_STUFF_SOURCES}
+  )
+
+target_include_directories(ui_stuff
+ PRIVATE
+ ${INCLUDE}
+ )

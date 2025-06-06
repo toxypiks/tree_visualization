@@ -7,6 +7,8 @@
 #define STB_DS_IMPLEMENTATION
 #include "stb_ds.h"
 
+#include "ui_stuff.h"
+
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset)
 {
     NodePos node_pos = {
@@ -195,6 +197,9 @@ int main(void)
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "tree_visualization");
 
+    UiStuff* ui_stuff = create_ui_stuff(screen_width, screen_height);
+    LayoutStack ls = {0};
+
     float w = GetRenderWidth();
     float h = GetRenderHeight();
 
@@ -219,26 +224,9 @@ int main(void)
         TreeLE *current = get_current(tree_list);
         TreeState tree_state_print = current->tree_state;
         BeginDrawing();
-        for (size_t i = 0; i < arrlen(tree_state_print.edge_coords); ++i) {
-            DrawLine((int)(tree_state_print.edge_coords[i].start_x*w),
-                     (int)(tree_state_print.edge_coords[i].start_y*h),
-                     (int)(tree_state_print.edge_coords[i].end_x*w),
-                     (int)(tree_state_print.edge_coords[i].end_y*h), PINK);
-        }
-        for (size_t i = 0; i < hmlen(tree_state_print.tree_map); ++i) {
-            int circle_x = (int)(tree_state_print.tree_map[i].value.x*w);
-            int circle_y = (int)(tree_state_print.tree_map[i].value.y*h);
-            float radius = 0.4f*tree_state_print.max_radius*w*0.5f;
-            DrawCircle(circle_x, circle_y, radius, GREEN);
-            DrawCircle(circle_x, circle_y, 0.9f*radius, background);
-
-            char text[8];
-            sprintf(text, "%d", tree_state_print.tree_map[i].key->data);
-            int len_pos = strlen(text)*0.2 + 0.3f;
-            float font_size = 0.8f * radius;
-            DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);
-        }
-
+        layout_stack_push(&ls, LO_VERT, ui_rect(0, 0, w, h), 2, 0);
+        current_tree_widget(layout_stack_slot(&ls), tree_list, background);
+        widget(layout_stack_slot(&ls), PINK);
         ClearBackground(background);
         EndDrawing();
     }
