@@ -66,6 +66,7 @@ UiStuff* create_ui_stuff(size_t screen_width, size_t screen_height);
 void ui_stuff_clear(UiStuff*);
 
 UiRect ui_rect(float x, float y, float w, float h);
+UiRect rect_combine(UiRect rect0, UiRect rect1, LayoutOrient orient);
 UiRect layout_slot_loc(Layout *l, const char *file_path, int line);
 void layout_stack_push(LayoutStack *ls, LayoutOrient orient, UiRect rect, size_t count, float gap);
 void layout_stack_delete(LayoutStack *ls);

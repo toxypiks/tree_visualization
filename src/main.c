@@ -224,8 +224,11 @@ int main(void)
         TreeLE *current = get_current(tree_list);
         TreeState tree_state_print = current->tree_state;
         BeginDrawing();
-        layout_stack_push(&ls, LO_VERT, ui_rect(0, 0, w, h), 2, 0);
-        current_tree_widget(layout_stack_slot(&ls), tree_list, background);
+        layout_stack_push(&ls, LO_VERT, ui_rect(0, 0, w, h), 3, 0);
+        UiRect rect0 = layout_stack_slot(&ls);
+        UiRect rect1 = layout_stack_slot(&ls);
+        UiRect rect_total = rect_combine(rect0, rect1, LO_VERT);
+        current_tree_widget(rect_total, tree_list, background);
         widget(layout_stack_slot(&ls), PINK);
         ClearBackground(background);
         EndDrawing();

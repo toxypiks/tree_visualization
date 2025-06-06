@@ -10,6 +10,9 @@
 
 #define ARRAY_LEN(xs) sizeof(xs)/sizeof(xs[0])
 
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 UiRect ui_rect(float x, float y, float w, float h) {
   UiRect r = {0};
   r.x = x;
@@ -17,6 +20,25 @@ UiRect ui_rect(float x, float y, float w, float h) {
   r.w = w;
   r.h = h;
   return r;
+}
+
+UiRect rect_combine(UiRect rect0, UiRect rect1, LayoutOrient orient)
+{
+    if (orient == LO_VERT) {
+        return (UiRect) {
+            .x = MIN(rect0.x, rect1.x),
+            .y = MIN(rect0.y, rect1.y),
+            .w = rect0.w,
+            .h = rect0.h + rect1.h,
+        };
+    } else { // LO_HORZ
+        return (UiRect) {
+            .x = MIN(rect0.x, rect1.x),
+            .y = MIN(rect0.y, rect1.y),
+            .w = rect0.w + rect1.w,
+            .h = rect0.h,
+        };
+    }
 }
 
 UiRect layout_slot_loc(Layout *l, const char *file_path, int line)
@@ -110,6 +132,8 @@ void widget(UiRect r, Color c) { DrawRectangle(r.x, r.y, r.w, r.h, c); }
 
 void current_tree_widget(UiRect r, TreeList *tree_list, Color background)
 {
+    float x = r.x;
+    float y = r.y;
     float w = r.w;
     float h = r.h;
 
@@ -117,14 +141,14 @@ void current_tree_widget(UiRect r, TreeList *tree_list, Color background)
     TreeState tree_state_print = current->tree_state;
 
     for (size_t i = 0; i < arrlen(tree_state_print.edge_coords); ++i) {
-        DrawLine((int)(tree_state_print.edge_coords[i].start_x*w),
-        (int)(tree_state_print.edge_coords[i].start_y*h),
-        (int)(tree_state_print.edge_coords[i].end_x*w),
-        (int)(tree_state_print.edge_coords[i].end_y*h), PINK);
+        DrawLine((int)(tree_state_print.edge_coords[i].start_x*w + x),
+                 (int)(tree_state_print.edge_coords[i].start_y*h + y),
+                 (int)(tree_state_print.edge_coords[i].end_x*w + x),
+                 (int)(tree_state_print.edge_coords[i].end_y*h + y), PINK);
     }
     for (size_t i = 0; i < hmlen(tree_state_print.tree_map); ++i) {
-        int circle_x = (int)(tree_state_print.tree_map[i].value.x*w);
-        int circle_y = (int)(tree_state_print.tree_map[i].value.y*h);
+        int circle_x = (int)(tree_state_print.tree_map[i].value.x*w + x);
+        int circle_y = (int)(tree_state_print.tree_map[i].value.y*h +  y);
         float radius = 0.4f*tree_state_print.max_radius*w*0.5f;
         DrawCircle(circle_x, circle_y, radius, GREEN);
         DrawCircle(circle_x, circle_y, 0.9f*radius, background);
