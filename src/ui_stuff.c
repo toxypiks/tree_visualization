@@ -166,15 +166,28 @@ void tree_list_widget(UiRect r, TreeList *tree_list, Color background)
     float h = r.h;
 
     TreeLE *current = get_current(tree_list);
-    TreeState tree_state_print = current->tree_state;
+    TreeState* tree_state_print[4] = {0};
+    tree_state_print[2] = &(current->tree_state);
+    if (current->prev) {
+        tree_state_print[1] = &(current->prev->tree_state);
+        if (current->prev->prev) {
+            tree_state_print[0] = &(current->prev->prev->tree_state);
+        }
+    }
+    if (current->next) {
+        tree_state_print[3] = &(current->next->tree_state);
+    }
 
     LayoutStack ls = {0};
-    layout_stack_push(&ls, LO_HORZ, ui_rect(x, y, w, h), 5, 0);
-    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
-    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
-    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
-    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
-    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
+    layout_stack_push(&ls, LO_HORZ, ui_rect(x, y, w, h), 4, 0);
+
+    for (size_t i = 0; i < 4 ;++i) {
+        if(tree_state_print[i]) {
+            tree_widget(layout_stack_slot(&ls), tree_state_print[i], background);
+        } else {
+            widget(layout_stack_slot(&ls), background);
+        }
+    }
 }
 
 UiStuff* create_ui_stuff(size_t screen_width, size_t screen_height){
