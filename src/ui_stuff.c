@@ -130,7 +130,7 @@ static Color colors[] = {
 
 void widget(UiRect r, Color c) { DrawRectangle(r.x, r.y, r.w, r.h, c); }
 
-void current_tree_widget(UiRect r, TreeState *tree_state_print, Color background)
+void tree_widget(UiRect r, TreeState *tree_state_print, Color background)
 {
     float x = r.x;
     float y = r.y;
@@ -156,6 +156,25 @@ void current_tree_widget(UiRect r, TreeState *tree_state_print, Color background
         float font_size = 0.8f * radius;
         DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);
     }
+}
+
+void tree_list_widget(UiRect r, TreeList *tree_list, Color background)
+{
+    float x = r.x;
+    float y = r.y;
+    float w = r.w;
+    float h = r.h;
+
+    TreeLE *current = get_current(tree_list);
+    TreeState tree_state_print = current->tree_state;
+
+    LayoutStack ls = {0};
+    layout_stack_push(&ls, LO_HORZ, ui_rect(x, y, w, h), 5, 0);
+    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
+    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
+    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
+    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
+    tree_widget(layout_stack_slot(&ls), &tree_state_print, background);
 }
 
 UiStuff* create_ui_stuff(size_t screen_width, size_t screen_height){
