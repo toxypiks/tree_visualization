@@ -117,6 +117,13 @@ int main(void)
             // copy old tree in new state
             tree_algo_step(&(new_tree_state.tree));
             calc_tree_state(&new_tree_state);
+            get_depth(new_tree_state.tree, &(new_tree_state.tree_depth_map));
+            for (size_t i = 0; i < hmlen(new_tree_state.tree_depth_map); ++i) {
+                printf("node:%d depth: %d\n",
+                       new_tree_state.tree_depth_map[i].key->data,
+                       new_tree_state.tree_depth_map[i].value);
+            }
+
 
             list_push_last(tree_list, new_tree_state);
         }

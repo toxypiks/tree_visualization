@@ -39,6 +39,7 @@ typedef struct EdgeCoordinates {
 typedef struct TreeState {
     Node *tree;
     TreeMap *tree_map;
+    TreeDepthMap *tree_depth_map;
     Edge *edges;
     EdgeCoordinates *edge_coords;
     float max_radius;
