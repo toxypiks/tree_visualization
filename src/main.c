@@ -38,6 +38,8 @@ Node* tree_copy(Node *tree)
     return new_tree;
 }
 
+
+
 int main(void)
 {
     Color background = GetColor(0x181818FF);
@@ -56,6 +58,7 @@ int main(void)
     tree_insert(&tree, 3);
 
 
+    printf("tree depth: %d\n", get_depth(tree));
     // 10, 2, 1, 5, 17
     tree_print_preorder(tree);
     printf("---------------------\n");

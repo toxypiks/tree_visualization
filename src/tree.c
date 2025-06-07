@@ -5,6 +5,8 @@
 
 #include "stb_ds.h"
 
+#define MAX(a,b) (((a)>(b))?(a):(b))
+
 Node* create_node (int data)
 {
     Node *new_node = malloc(sizeof(Node));
@@ -92,7 +94,22 @@ NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset
     return node_pos;
 }
 
-//get_depth
+int get_depth(Node* tree)
+{
+   if (!tree) {
+       return 0;
+   }
+   int depth_left = 0;
+   if (tree->left) {
+      depth_left = get_depth(tree->left);
+   }
+   int depth_right = 0;
+   if (tree->right) {
+      depth_right = get_depth(tree->right);
+   }
+   int depth = MAX(depth_left, depth_right) +1;
+   return depth;
+}
 
 void normalize_values(TreeMap *tree_map, float max_x, float max_y)
 {
