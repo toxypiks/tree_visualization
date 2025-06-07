@@ -58,7 +58,13 @@ int main(void)
     tree_insert(&tree, 3);
 
 
-    printf("tree depth: %d\n", get_depth(tree));
+    TreeDepthMap *tree_depth_map = NULL;
+    printf("tree depth: %d\n", get_depth(tree, &tree_depth_map));
+
+    for (size_t i = 0; i < hmlen(tree_depth_map); ++i) {
+        printf("node:%d depth: %d\n",tree_depth_map[i].key->data, tree_depth_map[i].value);
+    }
+    printf("\n");
     // 10, 2, 1, 5, 17
     tree_print_preorder(tree);
     printf("---------------------\n");

@@ -19,6 +19,11 @@ typedef struct TreeMap {
     NodePos value;
 } TreeMap;
 
+typedef struct TreeDepthMap {
+    Node *key;
+    int value;
+} TreeDepthMap;
+
 typedef struct Edge {
     Node* start;
     Node* end;
@@ -43,7 +48,7 @@ Node* create_node (int data);
 void tree_insert(Node **tree, int data);
 void tree_print_preorder(Node* tree);
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset);
-int get_depth(Node* tree);
+int get_depth(Node* tree, TreeDepthMap **tree_depth_map);
 void normalize_values(TreeMap *tree_map, float max_x, float max_y);
 void get_edges(Node* tree, Edge** edges);
 EdgeCoordinates* translate_edges_to_coordinates(Edge* edges, TreeMap* tree_map);
