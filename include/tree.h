@@ -5,6 +5,7 @@ typedef struct Node {
     int data;
     struct Node *left;
     struct Node *right;
+    int depth;
 } Node;
 
 typedef struct NodePos {
@@ -42,5 +43,12 @@ typedef struct TreeState {
 Node* create_node (int data);
 void tree_insert(Node **tree, int data);
 void tree_print_preorder(Node* tree);
+NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset);
+void normalize_values(TreeMap *tree_map, float max_x, float max_y);
+void get_edges(Node* tree, Edge** edges);
+EdgeCoordinates* translate_edges_to_coordinates(Edge* edges, TreeMap* tree_map);
+void print_hash_map(TreeMap *tree_map);
+float max_layer(TreeMap *tree_map);
+TreeMap* calc_tree_poses(Node* tree, float layer, float* max_radius);
 
 #endif // TREE_H_
