@@ -113,6 +113,25 @@ int get_depth(Node* tree, TreeDepthMap **tree_depth_map)
    return depth;
 }
 
+int get_balance(Node *tree, TreeDepthMap *tree_depth_map)
+{
+    if(!tree) {
+        return 0;
+    }
+    if(tree->left == NULL && tree->right == NULL) {
+        return 0;
+    }
+    int depth_left_child = 0;
+    if (tree->left) {
+        depth_left_child = hmget(tree_depth_map, tree->left);
+    }
+    int depth_right_child = 0;
+    if (tree->right) {
+        depth_right_child = hmget(tree_depth_map, tree->right);
+    }
+    return depth_right_child - depth_left_child;
+}
+
 void normalize_values(TreeMap *tree_map, float max_x, float max_y)
 {
     if(!tree_map){

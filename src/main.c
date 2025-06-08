@@ -59,10 +59,14 @@ int main(void)
 
 
     TreeDepthMap *tree_depth_map = NULL;
-    printf("tree depth: %d\n", get_depth(tree, &tree_depth_map));
+    get_depth(tree, &tree_depth_map);
 
     for (size_t i = 0; i < hmlen(tree_depth_map); ++i) {
-        printf("node:%d depth: %d\n",tree_depth_map[i].key->data, tree_depth_map[i].value);
+        printf("node:%d depth: %d balance: %d\n",
+               tree_depth_map[i].key->data,
+               tree_depth_map[i].value,
+               get_balance(tree_depth_map[i].key,
+                           tree_depth_map));
     }
     printf("\n");
     // 10, 2, 1, 5, 17
@@ -83,6 +87,7 @@ int main(void)
     TreeState tree_state = {
         .tree = tree,
         .tree_map = tree_map,
+        .tree_depth_map = tree_depth_map,
         .edges = edges,
         .edge_coords = edge_coords,
         .max_radius = max_radius
@@ -118,6 +123,7 @@ int main(void)
             tree_algo_step(&(new_tree_state.tree));
             calc_tree_state(&new_tree_state);
             get_depth(new_tree_state.tree, &(new_tree_state.tree_depth_map));
+
             for (size_t i = 0; i < hmlen(new_tree_state.tree_depth_map); ++i) {
                 printf("node:%d depth: %d\n",
                        new_tree_state.tree_depth_map[i].key->data,

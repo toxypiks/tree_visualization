@@ -144,6 +144,7 @@ void tree_widget(UiRect r, TreeState *tree_state_print, Color background)
                  (int)(tree_state_print->edge_coords[i].end_y*h + y), PINK);
     }
     for (size_t i = 0; i < hmlen(tree_state_print->tree_map); ++i) {
+        int balance = get_balance(tree_state_print->tree_map[i].key, tree_state_print->tree_depth_map);
         int circle_x = (int)(tree_state_print->tree_map[i].value.x*w + x);
         int circle_y = (int)(tree_state_print->tree_map[i].value.y*h +  y);
         float radius = 0.4f*tree_state_print->max_radius*w*0.5f;
@@ -155,6 +156,12 @@ void tree_widget(UiRect r, TreeState *tree_state_print, Color background)
         int len_pos = strlen(text)*0.2 + 0.3f;
         float font_size = 0.8f * radius;
         DrawText(text, circle_x - radius*len_pos, circle_y - radius*0.3f, font_size, GREEN);
+
+        char balance_text[8];
+        sprintf(balance_text, "%d", balance);
+        int balance_len_pos = strlen(balance_text)*0.2 + 0.3f;
+        float balance_font_size = 0.7f * radius;
+        DrawText(balance_text, circle_x - radius*balance_len_pos + 1.2*radius, circle_y - radius*0.3f, balance_font_size, ORANGE);
     }
 }
 
