@@ -53,7 +53,43 @@ target_sources(stack
 target_include_directories(stack
  PRIVATE
  ${INCLUDE}
- )
+)
+
+set(AVL_TREE_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/avl_tree.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/avl_tree.h
+)
+
+set(TREE_STACK_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tree_stack.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/tree_stack.h
+)
+
+add_library(tree_stack)
+target_sources(tree_stack
+ PRIVATE
+  ${TREE_STACK_SOURCES}
+  )
+
+target_include_directories(tree_stack
+ PRIVATE
+ ${INCLUDE}
+)
+
+set(AVL_TREE_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/avl_tree.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/avl_tree.h
+)
+
+add_library(avl_tree)
+target_sources(avl_tree
+ PRIVATE
+  ${AVL_TREE_SOURCES}
+  )
+target_include_directories(avl_tree
+ PRIVATE
+ ${INCLUDE}
+)
 
 set(MAIN_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.c
@@ -69,7 +105,7 @@ target_link_libraries(main
   ${raylib_LIBRARIES}
   tree
   doubly_linked_list
-  stack
+  tree_stack
   ui_stuff
 )
 

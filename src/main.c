@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "raylib.h"
 #include "tree.h"
-#include "stack.h"
+#include "tree_stack.h"
 #include "doubly_linked_list.h"
 
 #define STB_DS_IMPLEMENTATION
@@ -38,8 +38,6 @@ Node* tree_copy(Node *tree)
     return new_tree;
 }
 
-
-
 int main(void)
 {
     Color background = GetColor(0x181818FF);
@@ -56,6 +54,12 @@ int main(void)
     tree_insert(&tree, 12);
     tree_insert(&tree, 14);
     tree_insert(&tree, 3);
+
+    printf("---------recursive------------\n");
+    tree_print_preorder(tree);
+    printf("---------iterative------------\n");
+    tree_print_preorder_interative(tree);
+    printf("-----------end--------------\n");
 
 
     TreeDepthMap *tree_depth_map = NULL;

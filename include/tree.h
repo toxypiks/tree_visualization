@@ -48,6 +48,7 @@ typedef struct TreeState {
 Node* create_node (int data);
 void tree_insert(Node **tree, int data);
 void tree_print_preorder(Node* tree);
+void tree_print_preorder_interative(Node* tree);
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset);
 int get_depth(Node* tree, TreeDepthMap **tree_depth_map);
 int get_balance(Node *tree, TreeDepthMap *tree_depth_map);

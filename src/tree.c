@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "stb_ds.h"
+#include "tree_stack.h"
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -57,6 +58,24 @@ void tree_print_preorder(Node* tree)
        printf("%d\n", tree->data);
        tree_print_preorder(tree->left);
        tree_print_preorder(tree->right);
+    }
+}
+
+void tree_print_preorder_interative(Node* tree)
+{
+    TreeStack* tree_stack = create_stack();
+    stack_push(tree_stack, tree);
+
+    while (!is_empty(tree_stack)) {
+        Node* tmp = stack_pop(tree_stack);
+        printf("%d\n", tmp->data);
+        if(tmp->right) {
+            stack_push(tree_stack, tmp->right);
+        }
+        if(tmp->left) {
+            stack_push(tree_stack, tmp->left);
+        }
+
     }
 }
 
