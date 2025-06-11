@@ -55,6 +55,22 @@ target_include_directories(stack
  ${INCLUDE}
 )
 
+set(TREE_QUEUE_SOURCES
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/tree_queue.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/tree_queue.h
+)
+
+add_library(tree_queue)
+target_sources(tree_queue
+ PRIVATE
+  ${TREE_QUEUE_SOURCES}
+  )
+
+target_include_directories(tree_queue
+ PRIVATE
+ ${INCLUDE}
+)
+
 set(AVL_TREE_SOURCES
   ${CMAKE_CURRENT_SOURCE_DIR}/src/avl_tree.c
   ${CMAKE_CURRENT_SOURCE_DIR}/include/avl_tree.h
@@ -107,6 +123,7 @@ target_link_libraries(main
   doubly_linked_list
   tree_stack
   ui_stuff
+  tree_queue
 )
 
 set(UI_STUFF_SOURCES

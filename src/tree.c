@@ -75,9 +75,10 @@ void tree_print_preorder_interative(Node* tree)
         if(tmp->left) {
             stack_push(tree_stack, tmp->left);
         }
-
     }
 }
+
+
 
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset)
 {
@@ -114,6 +115,25 @@ NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset
 }
 
 int get_depth(Node* tree, TreeDepthMap **tree_depth_map)
+{
+   if (!tree) {
+       return 0;
+   }
+   int depth_left = 0;
+   if (tree->left) {
+      depth_left = get_depth(tree->left, tree_depth_map);
+   }
+   int depth_right = 0;
+   if (tree->right) {
+      depth_right = get_depth(tree->right, tree_depth_map);
+   }
+   int depth = MAX(depth_left, depth_right) +1;
+   hmput(*tree_depth_map, tree, depth);
+
+   return depth;
+}
+
+int get_depth_iterative(Node* tree, TreeDepthMap **tree_depth_map)
 {
    if (!tree) {
        return 0;

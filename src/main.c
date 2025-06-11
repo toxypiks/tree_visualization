@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "tree.h"
 #include "tree_stack.h"
+#include "tree_queue.h"
 #include "doubly_linked_list.h"
 
 #define STB_DS_IMPLEMENTATION
@@ -55,12 +56,16 @@ int main(void)
     tree_insert(&tree, 14);
     tree_insert(&tree, 3);
 
-    printf("---------recursive------------\n");
-    tree_print_preorder(tree);
-    printf("---------iterative------------\n");
-    tree_print_preorder_interative(tree);
-    printf("-----------end--------------\n");
+    TreeQueue* test = create_queue();
+    queue_enqueue(test, tree);
+    queue_enqueue(test, tree->left);
+    queue_enqueue(test, tree->right);
+    print_queue(test);
 
+    printf("\n");
+    queue_dequeue(test);
+    queue_dequeue(test);
+    print_queue(test);
 
     TreeDepthMap *tree_depth_map = NULL;
     get_depth(tree, &tree_depth_map);
@@ -101,7 +106,7 @@ int main(void)
     size_t screen_width = 800;
     size_t screen_height = 600;
 
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    /*SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     SetTargetFPS(60);
     InitWindow(screen_width, screen_height, "tree_visualization");
 
@@ -109,9 +114,9 @@ int main(void)
     LayoutStack ls = {0};
 
     float w = GetRenderWidth();
-    float h = GetRenderHeight();
+    float h = GetRenderHeight();*/
 
-    while (!WindowShouldClose()) {
+    /*while (!WindowShouldClose()) {
         if(IsKeyPressed(KEY_RIGHT)) {
             increment_current(tree_list);
         }
@@ -149,6 +154,6 @@ int main(void)
         ClearBackground(background);
         EndDrawing();
     }
-    CloseWindow();
+    CloseWindow();*/
     return 0;
 }
