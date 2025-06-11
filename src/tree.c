@@ -5,6 +5,7 @@
 
 #include "stb_ds.h"
 #include "tree_stack.h"
+#include "tree_queue.h"
 
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
@@ -78,7 +79,22 @@ void tree_print_preorder_interative(Node* tree)
     }
 }
 
+void tree_print_bfs_iterative(Node* tree)
+{
+    TreeQueue* tree_queue = create_queue();
+    queue_enqueue(tree_queue, tree);
 
+    while (!is_queue_empty(tree_queue)) {
+        Node* tmp = queue_dequeue(tree_queue);
+        printf("%d\n", tmp->data);
+        if (tmp->left) {
+            queue_enqueue(tree_queue, tmp->left);
+        }
+        if (tmp->right) {
+            queue_enqueue(tree_queue, tmp->right);
+        }
+    }
+}
 
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset)
 {
