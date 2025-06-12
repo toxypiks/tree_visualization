@@ -57,6 +57,16 @@ int main(void)
     tree_insert(&tree, 3);
 
     tree_print_bfs_iterative(tree);
+    printf("--------------depth recursive----------\n");
+    TreeDepthMap *tree_depth_map_recursive = NULL;
+    size_t depth_rec = get_depth(tree, &tree_depth_map_recursive);
+    printf("depth_rec: %d \n", depth_rec);
+
+    printf("--------------depth iterative----------\n");
+    TreeDepthMap *tree_depth_map_iterative = NULL;
+    size_t depth_iter = get_depth_iterative(tree, &tree_depth_map_iterative);
+    printf("depth_iter: %d \n", depth_iter);
+    printf("--------------depth end----------------\n");
 
     TreeDepthMap *tree_depth_map = NULL;
     get_depth(tree, &tree_depth_map);

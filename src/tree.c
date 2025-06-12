@@ -151,21 +151,52 @@ int get_depth(Node* tree, TreeDepthMap **tree_depth_map)
 
 int get_depth_iterative(Node* tree, TreeDepthMap **tree_depth_map)
 {
-   if (!tree) {
-       return 0;
-   }
-   int depth_left = 0;
-   if (tree->left) {
-      depth_left = get_depth(tree->left, tree_depth_map);
-   }
-   int depth_right = 0;
-   if (tree->right) {
-      depth_right = get_depth(tree->right, tree_depth_map);
-   }
-   int depth = MAX(depth_left, depth_right) +1;
-   hmput(*tree_depth_map, tree, depth);
+    if (!tree) {
+        return 0;
+    }
+    TreeStack* tree_stack = create_stack();
+    stack_push(tree_stack, tree);
 
-   return depth;
+    while (!is_empty(tree_stack)) {
+        bool b0 = false;
+        bool b1 = false;
+        Node* tmp = stack_pop(tree_stack);
+        printf("stackpop: tmp->data: %d \n", tmp->data);
+        if (tmp->left) {
+            int left_idx = hmgeti(*tree_depth_map, tmp->left);
+            printf("left idx: %d\n", left_idx);
+            if(left_idx >= 0) { // noch nicht in hashmap
+                b0 = true;
+            }
+        } else {
+            b0 = true;
+        }
+        if(tmp->right) {
+            int right_idx = hmgeti(*tree_depth_map, tmp->left);
+            printf("right idx: %d\n", right_idx);
+            if(right_idx >= 0) { // noch nicht in hashmap
+                b1 = true;
+            }
+        } else {
+            b1 = true;
+        }
+        printf("b0: %d, b1: %d \n",b0, b1);
+        if (b0 && b1) {
+            int left_depth = (tmp->left) ? hmget(*tree_depth_map, tmp->left) : 0;
+            int right_depth = (tmp->right) ? hmget(*tree_depth_map, tmp->right) : 0;
+            int depth = MAX(left_depth, right_depth) + 1;
+            hmput(*tree_depth_map, tmp, depth);
+        } else {
+           stack_push(tree_stack, tmp);
+        }
+        if (!b0 && tmp->left) {
+            stack_push(tree_stack, tmp->left);
+        }
+        if (!b1 && tmp->right) {
+            stack_push(tree_stack, tmp->right);
+        }
+    }
+    return hmget(*tree_depth_map, tree);
 }
 
 int get_balance(Node *tree, TreeDepthMap *tree_depth_map)
