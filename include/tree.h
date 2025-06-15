@@ -52,6 +52,7 @@ void tree_print_preorder_interative(Node* tree);
 void tree_print_bfs_iterative(Node* tree);
 NodePos get_node_pos(Node* tree, TreeMap **tree_map, float layer, float x_offset);
 int get_depth(Node* tree, TreeDepthMap **tree_depth_map);
+int get_depth_iterative(Node* tree, TreeDepthMap **tree_depth_map);
 int get_balance(Node *tree, TreeDepthMap *tree_depth_map);
 void normalize_values(TreeMap *tree_map, float max_x, float max_y);
 void get_edges(Node* tree, Edge** edges);

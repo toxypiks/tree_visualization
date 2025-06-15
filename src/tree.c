@@ -161,26 +161,22 @@ int get_depth_iterative(Node* tree, TreeDepthMap **tree_depth_map)
         bool b0 = false;
         bool b1 = false;
         Node* tmp = stack_pop(tree_stack);
-        printf("stackpop: tmp->data: %d \n", tmp->data);
         if (tmp->left) {
             int left_idx = hmgeti(*tree_depth_map, tmp->left);
-            printf("left idx: %d\n", left_idx);
-            if(left_idx >= 0) { // noch nicht in hashmap
+            if(left_idx >= 0) { // not yet in hashmap
                 b0 = true;
             }
         } else {
             b0 = true;
         }
         if(tmp->right) {
-            int right_idx = hmgeti(*tree_depth_map, tmp->left);
-            printf("right idx: %d\n", right_idx);
-            if(right_idx >= 0) { // noch nicht in hashmap
+            int right_idx = hmgeti(*tree_depth_map, tmp->right);
+            if(right_idx >= 0) { // not yet in hashmap
                 b1 = true;
             }
         } else {
             b1 = true;
         }
-        printf("b0: %d, b1: %d \n",b0, b1);
         if (b0 && b1) {
             int left_depth = (tmp->left) ? hmget(*tree_depth_map, tmp->left) : 0;
             int right_depth = (tmp->right) ? hmget(*tree_depth_map, tmp->right) : 0;
