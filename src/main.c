@@ -102,6 +102,8 @@ int main(void)
         .edge_coords = edge_coords,
         .max_radius = max_radius
     };
+    bool insert_mode = false;
+    TreeInsertState* tree_insert_state = NULL;
     list_push_first(tree_list, tree_state);
 
     size_t screen_width = 800;
@@ -118,18 +120,20 @@ int main(void)
     float h = GetRenderHeight();
 
     while (!WindowShouldClose()) {
-        if(IsKeyPressed(KEY_RIGHT)) {
+        if(IsKeyPressed(KEY_RIGHT) && insert_mode == false) {
             increment_current(tree_list);
         }
-        if(IsKeyPressed(KEY_LEFT)) {
+        if(IsKeyPressed(KEY_LEFT) && insert_mode == false) {
             decrement_current(tree_list);
         }
-        if(IsKeyPressed(KEY_N)) { // TODO later Emacs keybindings
+        if(IsKeyPressed(KEY_N) && insert_mode == false) { // TODO later Emacs keybindings
             // TODO push new TreeLE to list
 
             TreeState new_tree_state = {0};
             new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
             // copy old tree in new state
+
+            // here is insert
             tree_algo_step(&(new_tree_state.tree));
             calc_tree_state(&new_tree_state);
             get_depth(new_tree_state.tree, &(new_tree_state.tree_depth_map));
@@ -140,11 +144,42 @@ int main(void)
                        new_tree_state.tree_depth_map[i].value);
             }
 
-
             list_push_last(tree_list, new_tree_state);
         }
+        if (IsKeyPressed(KEY_I) && insert_mode == false) {
+            insert_mode = true;
+            TreeState new_tree_state = {0};
+            new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
+            list_push_last(tree_list, new_tree_state);
+
+            tree_insert_state = malloc(sizeof(TreeInsertState));
+            tree_insert_state->tmp = new_tree_state.tree;
+            tree_insert_state->found = false;
+            tree_insert_state->data = rand() % 30;
+            int tree_insert_end = tree_insert_stateful(tree_insert_state);
+            if(tree_insert_end == 0) {
+                insert_mode = false;
+                free(tree_insert_state);
+                tree_insert_state = NULL;
+            }
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            // down
+            // steps of insert
+            int tree_insert_end = tree_insert_stateful(tree_insert_state);
+            if (tree_insert_end == 0) {
+                insert_mode = false;
+                free(tree_insert_state);
+                tree_insert_state = NULL;
+            }
+        }
+        // TODO add stateful insert go back
         TreeLE *current = get_current(tree_list);
         TreeState tree_state_print = current->tree_state;
+
+        // TODO check if this is right
+        tree_state_print.tree_insert_state = tree_insert_state;
+
         BeginDrawing();
         layout_stack_push(&ls, LO_VERT, ui_rect(0, 0, w, h), 3, 0);
         UiRect rect0 = layout_stack_slot(&ls);

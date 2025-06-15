@@ -38,6 +38,12 @@ typedef struct EdgeCoordinates {
     float end_y;
 } EdgeCoordinates;
 
+typedef struct TreeInsertState {
+    Node* tmp;
+    bool found;
+    int data;
+} TreeInsertState;
+
 typedef struct TreeState {
     Node *tree;
     TreeMap *tree_map;
@@ -45,16 +51,12 @@ typedef struct TreeState {
     Edge *edges;
     EdgeCoordinates *edge_coords;
     float max_radius;
+    TreeInsertState* tree_insert_state;
 } TreeState;
-
-typedef struct TreeInsertState {
-    Node* tmp;
-    bool found;
-} TreeInsertState;
 
 Node* create_node (int data);
 void tree_insert(Node **tree, int data);
-int tree_insert_stateful(int data, TreeInsertState* tree_insert_state);
+int tree_insert_stateful(TreeInsertState* tree_insert_state);
 void tree_print_preorder(Node* tree);
 void tree_print_preorder_interative(Node* tree);
 void tree_print_bfs_iterative(Node* tree);
