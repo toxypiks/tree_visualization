@@ -6,11 +6,6 @@ typedef struct AVLNode {
     struct AVLNode *left;
     struct AVLNode *right;
     int height;
-} AVLNode;typedef struct AVLNode {
-    int key;
-    struct AVLNode *left;
-    struct AVLNode *right;
-    int height;
 } AVLNode;
 
 AVLNode* create_avl_node(int key);
