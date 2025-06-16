@@ -55,10 +55,11 @@ void tree_insert(Node **tree, int data) {
 
 int tree_insert_stateful(TreeInsertState* tree_insert_state)
 {
-    if(!tree_insert_state->found) { // search part
+    if (!tree_insert_state->found) { // search part
         if (tree_insert_state->data < tree_insert_state->tmp->data) {
             if (tree_insert_state->tmp->left != NULL) {
                 tree_insert_state->tmp = tree_insert_state->tmp->left;
+                return -1;
             } else {
                 tree_insert_state->found = true;
             }
@@ -69,13 +70,14 @@ int tree_insert_stateful(TreeInsertState* tree_insert_state)
         else {
             if (tree_insert_state->tmp->right != NULL) {
                 tree_insert_state->tmp = tree_insert_state->tmp->right;
+                return -1;
             }
             else {
                 tree_insert_state->found = true;
             }
         }
-        return -1;
-    } else {
+    }
+    if (tree_insert_state->found){
         // append
         if (tree_insert_state->data != tree_insert_state->tmp->data) { // no insert when already exist
             Node *new_node = create_node(tree_insert_state->data);
