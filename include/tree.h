@@ -51,7 +51,8 @@ typedef struct TreeState {
     Edge *edges;
     EdgeCoordinates *edge_coords;
     float max_radius;
-    TreeInsertState* tree_insert_state;
+    Node* node_to_append;
+    bool tree_insert_is_finished;
 } TreeState;
 
 Node* create_node (int data);

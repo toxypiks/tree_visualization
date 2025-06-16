@@ -110,7 +110,8 @@ int main(void)
         .tree_depth_map = tree_depth_map,
         .edges = edges,
         .edge_coords = edge_coords,
-        .max_radius = max_radius
+        .max_radius = max_radius,
+        .tree_insert_is_finished = false
     };
     bool insert_mode = false;
     TreeInsertState* tree_insert_state = NULL;
@@ -140,6 +141,7 @@ int main(void)
             // TODO push new TreeLE to list
 
             TreeState new_tree_state = {0};
+            new_tree_state.tree_insert_is_finished = false;
             new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
             // copy old tree in new state
 
@@ -160,6 +162,7 @@ int main(void)
         if (IsKeyPressed(KEY_I) && insert_mode == false) {
             insert_mode = true;
             TreeState new_tree_state = {0};
+            new_tree_state.tree_insert_is_finished = false;
             new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
             update_tree_state(&new_tree_state);
             list_push_last(tree_list, new_tree_state);
@@ -176,10 +179,11 @@ int main(void)
             int tree_insert_end = tree_insert_stateful(tree_insert_state);
             if (tree_insert_end == 0) {
                 TreeLE *current = get_current(tree_list);
-                update_tree_state(&(current->tree_state));
                 insert_mode = false;
+                current->tree_state.tree_insert_is_finished = true;
                 free(tree_insert_state);
                 tree_insert_state = NULL;
+                update_tree_state(&(current->tree_state));
             }
         }
         // TODO add stateful insert go back
@@ -187,8 +191,9 @@ int main(void)
         TreeState tree_state_print = current->tree_state;
 
         // TODO check if this is right
-        tree_state_print.tree_insert_state = tree_insert_state;
-
+        if(tree_insert_state) {
+            tree_state_print.node_to_append = tree_insert_state->tmp;
+        }
         BeginDrawing();
         layout_stack_push(&ls, LO_VERT, ui_rect(0, 0, w, h), 3, 0);
         UiRect rect0 = layout_stack_slot(&ls);
