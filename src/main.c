@@ -145,12 +145,15 @@ int main(void)
             }
 
             list_push_last(tree_list, new_tree_state);
+            increment_current(tree_list);
         }
         if (IsKeyPressed(KEY_I) && insert_mode == false) {
             insert_mode = true;
             TreeState new_tree_state = {0};
             new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
+            calc_tree_state(&new_tree_state);
             list_push_last(tree_list, new_tree_state);
+            increment_current(tree_list);
 
             tree_insert_state = malloc(sizeof(TreeInsertState));
             tree_insert_state->tmp = new_tree_state.tree;
