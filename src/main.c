@@ -17,12 +17,22 @@ void tree_algo_step(Node **tree)
     tree_insert(tree, rand_num);
 }
 
-void calc_tree_state(TreeState* tree_state)
+void update_tree_state(TreeState* tree_state)
 {
+    if(tree_state->tree_map) {
+        hmfree(tree_state->tree_map);
+    }
     tree_state->tree_map = calc_tree_poses(tree_state->tree, 0, &(tree_state->max_radius));
 
+    if(tree_state->edges) {
+        arrfree(tree_state->edges);
+        tree_state->edges = NULL;
+    }
     get_edges(tree_state->tree, &(tree_state->edges));
 
+    if(tree_state->edge_coords) {
+        arrfree(tree_state->edge_coords);
+    }
     tree_state->edge_coords = translate_edges_to_coordinates(tree_state->edges, tree_state->tree_map);
 }
 
@@ -135,7 +145,7 @@ int main(void)
 
             // here is insert
             tree_algo_step(&(new_tree_state.tree));
-            calc_tree_state(&new_tree_state);
+            update_tree_state(&new_tree_state);
             get_depth(new_tree_state.tree, &(new_tree_state.tree_depth_map));
 
             for (size_t i = 0; i < hmlen(new_tree_state.tree_depth_map); ++i) {
@@ -151,7 +161,7 @@ int main(void)
             insert_mode = true;
             TreeState new_tree_state = {0};
             new_tree_state.tree = tree_copy(tree_list->last->tree_state.tree);
-            calc_tree_state(&new_tree_state);
+            update_tree_state(&new_tree_state);
             list_push_last(tree_list, new_tree_state);
             increment_current(tree_list);
 
@@ -165,6 +175,8 @@ int main(void)
             // steps of insert
             int tree_insert_end = tree_insert_stateful(tree_insert_state);
             if (tree_insert_end == 0) {
+                TreeLE *current = get_current(tree_list);
+                update_tree_state(&(current->tree_state));
                 insert_mode = false;
                 free(tree_insert_state);
                 tree_insert_state = NULL;
