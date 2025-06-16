@@ -156,14 +156,8 @@ int main(void)
             tree_insert_state->tmp = new_tree_state.tree;
             tree_insert_state->found = false;
             tree_insert_state->data = rand() % 30;
-            int tree_insert_end = tree_insert_stateful(tree_insert_state);
-            if(tree_insert_end == 0) {
-                insert_mode = false;
-                free(tree_insert_state);
-                tree_insert_state = NULL;
-            }
         }
-        if (IsKeyPressed(KEY_DOWN)) {
+        if (IsKeyPressed(KEY_DOWN) && insert_mode == true) {
             // down
             // steps of insert
             int tree_insert_end = tree_insert_stateful(tree_insert_state);

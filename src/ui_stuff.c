@@ -149,8 +149,9 @@ void tree_widget(UiRect r, TreeState *tree_state_print, Color background)
         int circle_y = (int)(tree_state_print->tree_map[i].value.y*h +  y);
         float radius = 0.4f*tree_state_print->max_radius*w*0.5f;
         if (tree_state_print->tree_insert_state) {
-            if (tree_state_print->tree_map[i].key == tree_state_print->tree_insert_state->tmp) {
-                DrawCircle(circle_x, circle_y, 1.1*radius, GREEN);
+            // TODO better check for equal pointer
+            if (tree_state_print->tree_map[i].key->data == tree_state_print->tree_insert_state->tmp->data) {
+                DrawCircle(circle_x, circle_y, 1.2*radius, ORANGE);
                 DrawCircle(circle_x, circle_y, radius, background);
             }
         }
